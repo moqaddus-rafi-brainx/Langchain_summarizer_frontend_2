@@ -3,9 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://brainxtechnologies.github.io/Langchain_summarizer_frontend_2",
+  "homepage": "https://moqaddus-rafi-brainx.github.io/Langchain_summarizer_frontend_2/",
   "scripts": {
     "dev": "vite",
+    "predeploy":"npm run build",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
