@@ -63,7 +63,8 @@ const Home = () => {
     try {
       const data = await submitSummaryFeedback(threadId, accepted);
       
-      if (data.success) {
+      // For accept/reject, we expect a success message and form clearing
+      if (data.message) {
         setSuccessMessage(data.message);
         // Clear form after a short delay to show the success message
         setTimeout(() => {
@@ -75,13 +76,55 @@ const Home = () => {
           if (fileInputRef.current) {
             fileInputRef.current.value = '';
           }
-        }, 100000);
+        }, 3000);
       } else {
-        throw new Error(data.message || 'An error occurred while submitting feedback.');
+        throw new Error('No response message received from server.');
       }
       
     } catch (err) {
       setError(err.message || 'An error occurred while submitting feedback.');
+    } finally {
+      setIsSubmittingFeedback(false);
+    }
+  };
+
+  const handleRegenerate = async () => {
+    setIsSubmittingFeedback(true);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const data = await submitSummaryFeedback(threadId, SUMMARY_DECISIONS.REGENERATE);
+      
+      // Check if we have a summary in the response (regenerate case)
+      if (data.summary) {
+        setSummary(data.summary);
+        // Update threadId if a new one is provided
+        if (data.threadId) {
+          setThreadId(data.threadId);
+        }
+        // Keep the feedback buttons visible for the new summary
+        setShowAcceptReject(true);
+        // Show success message if provided
+        if (data.message) {
+          setSuccessMessage(data.message);
+        }
+      } else {
+        // If no new summary provided, clear form after a delay
+        setTimeout(() => {
+          setShowAcceptReject(false);
+          setSummary('');
+          setPdfFile(null);
+          setThreadId(null);
+          setSuccessMessage('');
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+        }, 3000);
+      }
+      
+    } catch (err) {
+      setError(err.message || 'An error occurred while regenerating summary.');
     } finally {
       setIsSubmittingFeedback(false);
     }
@@ -207,6 +250,20 @@ const Home = () => {
                       </>
                     ) : (
                       '❌ Reject Summary'
+                    )}
+                  </button>
+                  <button
+                    className="regenerate-btn"
+                    onClick={handleRegenerate}
+                    disabled={isSubmittingFeedback}
+                  >
+                    {isSubmittingFeedback ? (
+                      <>
+                        <span className="loading-spinner"></span>
+                        Regenerating...
+                      </>
+                    ) : (
+                      '�� Regenerate Summary'
                     )}
                   </button>
                 </div>

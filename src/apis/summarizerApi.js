@@ -20,8 +20,18 @@ export const uploadAndProcessDocument = async (file) => {
   return await response.json();
 };
 
-//Submit feedback (accept/reject) for a generated summary
-export const submitSummaryFeedback = async (threadId, accepted) => {
+//Submit feedback (accept/reject/regenerate) for a generated summary
+export const submitSummaryFeedback = async (threadId, decision) => {
+  let finalDecision;
+  
+  // Handle boolean values for backward compatibility
+  if (typeof decision === 'boolean') {
+    finalDecision = decision ? SUMMARY_DECISIONS.APPROVE : SUMMARY_DECISIONS.REJECT;
+  } else {
+    // Handle string values (regenerate, approve, reject)
+    finalDecision = decision;
+  }
+
   const response = await fetch(`${backendUrl}/api/upload/save-summary`, {
     method: 'POST',
     headers: {
@@ -29,7 +39,7 @@ export const submitSummaryFeedback = async (threadId, accepted) => {
     },
     body: JSON.stringify({
       threadId: threadId,
-      decision: accepted ? SUMMARY_DECISIONS.APPROVE : SUMMARY_DECISIONS.REJECT
+      decision: finalDecision
     }),
   });
 
@@ -38,5 +48,6 @@ export const submitSummaryFeedback = async (threadId, accepted) => {
     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
   }
 
-  return await response.json();
+  const responseData = await response.json();
+  return responseData;
 }; 

@@ -330,7 +330,7 @@
   flex-wrap: wrap;
 }
 
-.accept-btn, .reject-btn {
+.accept-btn, .reject-btn, .regenerate-btn {
   padding: 15px 25px;
   border: none;
   border-radius: 12px;
@@ -374,6 +374,23 @@
 }
 
 .reject-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.regenerate-btn {
+  background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+}
+
+.regenerate-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+}
+
+.regenerate-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
@@ -468,7 +485,7 @@
     flex-direction: column;
   }
   
-  .accept-btn, .reject-btn {
+  .accept-btn, .reject-btn, .regenerate-btn {
     width: 100%;
   }
 }
