@@ -66,17 +66,14 @@ const Home = () => {
       // For accept/reject, we expect a success message and form clearing
       if (data.message) {
         setSuccessMessage(data.message);
-        // Clear form after a short delay to show the success message
-        setTimeout(() => {
-          setShowAcceptReject(false);
-          setSummary('');
-          setPdfFile(null);
-          setThreadId(null);
-          setSuccessMessage('');
-          if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-          }
-        }, 3000);
+        // Clear form immediately after getting response
+        setShowAcceptReject(false);
+        setSummary('');
+        setPdfFile(null);
+        setThreadId(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       } else {
         throw new Error('No response message received from server.');
       }
